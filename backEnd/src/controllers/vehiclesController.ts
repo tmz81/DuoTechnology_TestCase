@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
-import { IVehicles} from "../interfaces/Vehicles";
+import { IVehicles } from "../interfaces/Vehicles";
 
 export const getAllVehicles = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const veiculos = await prisma.vehicles.findMany({
       include: {
@@ -13,16 +13,16 @@ export const getAllVehicles = async (
         category: true,
       },
     });
-    return res.json(veiculos);
+    res.json(veiculos);
   } catch (error) {
-    return res.status(500).json({ error: "Erro ao buscar veículos" });
+    res.status(500).json({ error: "Erro ao buscar veículos" });
   }
 };
 
 export const getVehicleById = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { id } = req.params;
   try {
     const veiculo = await prisma.vehicles.findUnique({
@@ -33,18 +33,18 @@ export const getVehicleById = async (
       },
     });
     if (!veiculo) {
-      return res.status(404).json({ error: "Veículo não encontrado" });
+      res.status(404).json({ error: "Veículo não encontrado" });
     }
-    return res.json(veiculo);
+    res.json(veiculo);
   } catch (error) {
-    return res.status(500).json({ error: "Erro ao buscar veículo" });
+    res.status(500).json({ error: "Erro ao buscar veículo" });
   }
 };
 
 export const createVehicle = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { model, year, daily_price, id_brand, id_category }: IVehicles =
     req.body;
 
@@ -53,14 +53,14 @@ export const createVehicle = async (
       where: { id: id_brand },
     });
     if (!marcaExiste) {
-      return res.status(400).json({ error: "Marca não encontrada" });
+      res.status(400).json({ error: "Marca não encontrada" });
     }
 
     const categoriaExiste = await prisma.categorys.findUnique({
       where: { id: id_category },
     });
     if (!categoriaExiste) {
-      return res.status(400).json({ error: "Categoria não encontrada" });
+      res.status(400).json({ error: "Categoria não encontrada" });
     }
 
     const novoVeiculo = await prisma.vehicles.create({
@@ -72,16 +72,16 @@ export const createVehicle = async (
         id_category,
       },
     });
-    return res.status(201).json(novoVeiculo);
+    res.status(201).json(novoVeiculo);
   } catch (error) {
-    return res.status(400).json({ error: "Erro ao criar veículo" });
+    res.status(400).json({ error: "Erro ao criar veículo" });
   }
 };
 
 export const updateVehicle = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { id } = req.params;
   const { model, year, daily_price, id_brand, id_category }: IVehicles =
     req.body;
@@ -91,7 +91,7 @@ export const updateVehicle = async (
       where: { id: parseInt(id) },
     });
     if (!veiculoExiste) {
-      return res.status(404).json({ error: "Veículo não encontrado" });
+      res.status(404).json({ error: "Veículo não encontrado" });
     }
 
     if (id_brand) {
@@ -99,7 +99,7 @@ export const updateVehicle = async (
         where: { id: id_brand },
       });
       if (!marcaExiste) {
-        return res.status(400).json({ error: "Marca não encontrada" });
+        res.status(400).json({ error: "Marca não encontrada" });
       }
     }
 
@@ -108,7 +108,7 @@ export const updateVehicle = async (
         where: { id: id_category },
       });
       if (!categoriaExiste) {
-        return res.status(400).json({ error: "Categoria não encontrada" });
+        res.status(400).json({ error: "Categoria não encontrada" });
       }
     }
 
@@ -122,23 +122,23 @@ export const updateVehicle = async (
         id_category,
       },
     });
-    return res.json(veiculoAtualizado);
+    res.json(veiculoAtualizado);
   } catch (error) {
-    return res.status(400).json({ error: "Erro ao atualizar veículo" });
+    res.status(400).json({ error: "Erro ao atualizar veículo" });
   }
 };
 
 export const deleteVehicle = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { id } = req.params;
   try {
     await prisma.vehicles.delete({
       where: { id: parseInt(id) },
     });
-    return res.status(204).send();
+    res.status(204).send();
   } catch (error) {
-    return res.status(400).json({ error: "Erro ao excluir veículo" });
+    res.status(400).json({ error: "Erro ao excluir veículo" });
   }
 };

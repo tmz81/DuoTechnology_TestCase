@@ -5,52 +5,52 @@ import { IBrands } from "../interfaces/IBrands";
 export const getAllBrands = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   try {
     const marcas = await prisma.brands.findMany();
-    return res.json(marcas);
+    res.json(marcas);
   } catch (error) {
-    return res.status(500).json({ error: "Erro ao buscar marcas" });
+    res.status(500).json({ error: "Erro ao buscar marcas" });
   }
 };
 
 export const getBrandById = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { id } = req.params;
   try {
     const marca = await prisma.brands.findUnique({
       where: { id: parseInt(id) },
     });
     if (!marca) {
-      return res.status(404).json({ error: "Marca não encontrada" });
+      res.status(404).json({ error: "Marca não encontrada" });
     }
-    return res.json(marca);
+    res.json(marca);
   } catch (error) {
-    return res.status(500).json({ error: "Erro ao buscar marca" });
+    res.status(500).json({ error: "Erro ao buscar marca" });
   }
 };
 
 export const createBrand = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { name }: IBrands = req.body;
   try {
     const novaMarca = await prisma.brands.create({
       data: { name },
     });
-    return res.status(201).json(novaMarca);
+    res.status(201).json(novaMarca);
   } catch (error) {
-    return res.status(400).json({ error: "Erro ao criar marca" });
+    res.status(400).json({ error: "Erro ao criar marca" });
   }
 };
 
 export const updateBrand = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { id } = req.params;
   const { name }: IBrands = req.body;
   try {
@@ -58,16 +58,16 @@ export const updateBrand = async (
       where: { id: parseInt(id) },
       data: { name },
     });
-    return res.json(marcaAtualizada);
+    res.json(marcaAtualizada);
   } catch (error) {
-    return res.status(400).json({ error: "Erro ao atualizar marca" });
+    res.status(400).json({ error: "Erro ao atualizar marca" });
   }
 };
 
 export const deleteBrand = async (
   req: Request,
   res: Response
-): Promise<Response> => {
+): Promise<void> => {
   const { id } = req.params;
   try {
     const veiculos = await prisma.vehicles.findMany({
@@ -75,7 +75,7 @@ export const deleteBrand = async (
     });
 
     if (veiculos.length > 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: "Não é possível excluir marca com veículos associados",
       });
     }
@@ -83,8 +83,8 @@ export const deleteBrand = async (
     await prisma.brands.delete({
       where: { id: parseInt(id) },
     });
-    return res.status(204).send();
+    res.status(204).send();
   } catch (error) {
-    return res.status(400).json({ error: "Erro ao excluir marca" });
+    res.status(400).json({ error: "Erro ao excluir marca" });
   }
 };
