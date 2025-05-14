@@ -13,6 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Users {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(100)
+  email     String     @unique @db.VarChar(100)
+  password  String
+  isAdmin   Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  vehicles  Vehicles[]
+
+  @@map("users")
+}
+
 model Brands {
   id       Int        @id @default(autoincrement())
   name     String     @db.VarChar(100)
@@ -30,8 +43,15 @@ model Vehicles {
   model       String    @db.VarChar(100)
   year        Int
   daily_price Decimal   @db.Decimal(10, 2)
-  id_brand    Int
+  available   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   brand       Brands    @relation(fields: [id_brand], references: [id])
-  id_category Int
+  id_brand    Int
   category    Categorys @relation(fields: [id_category], references: [id])
+  id_category Int
+  user        Users?    @relation(fields: [id_user], references: [id])
+  id_user     Int?
+
+  @@map("vehicles")
 }

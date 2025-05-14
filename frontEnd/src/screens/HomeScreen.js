@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
 import { Card, List, Text, ActivityIndicator } from "react-native-paper";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DashboardScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -16,22 +14,12 @@ const DashboardScreen = ({ navigation }) => {
 
   const fetchData = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-
-      // Buscar totais
-      const totalsResponse = await axios.get("SUA_API_URL/dashboard/totals", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Buscar veículos recentes
-      const vehiclesResponse = await axios.get("SUA_API_URL/vehicles/recent", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const totalsResponse = await getAllVehicles();
 
       setTotals(totalsResponse.data);
-      setRecentVehicles(vehiclesResponse.data);
+      setRecentVehicles(recentResponse.data);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os dados");
+      Alert.alert("Erro", "Falha ao buscar dados");
     } finally {
       setLoading(false);
       setRefreshing(false);
