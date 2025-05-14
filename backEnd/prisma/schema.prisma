@@ -13,25 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Marca {
-  id       Int       @id @default(autoincrement())
-  nome     String    @db.VarChar(100)
-  veiculos Veiculo[]
+model Brands {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(100)
+  vehicles Vehicles[]
 }
 
-model Categoria {
-  id        Int       @id @default(autoincrement())
-  descricao String    @db.VarChar(100)
-  veiculos  Veiculo[]
+model Categorys {
+  id          Int        @id @default(autoincrement())
+  description String     @db.VarChar(100)
+  vehicles    Vehicles[]
 }
 
-model Veiculo {
-  id           Int       @id @default(autoincrement())
-  modelo       String    @db.VarChar(100)
-  ano          Int
-  preco_diaria Decimal   @db.Decimal(10, 2)
-  id_marca     Int
-  marca        Marca     @relation(fields: [id_marca], references: [id])
-  id_categoria Int
-  categoria    Categoria @relation(fields: [id_categoria], references: [id])
+model Vehicles {
+  id          Int       @id @default(autoincrement())
+  model       String    @db.VarChar(100)
+  year        Int
+  daily_price Decimal   @db.Decimal(10, 2)
+  id_brand    Int
+  brand       Brands    @relation(fields: [id_brand], references: [id])
+  id_category Int
+  category    Categorys @relation(fields: [id_category], references: [id])
 }

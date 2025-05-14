@@ -1,26 +1,26 @@
 import { Request, Response } from "express";
-import prisma from "../prismaClient";
-import { IMarca } from "../interfaces/IMarca";
+import prisma from "../prisma/client";
+import { IBrands } from "../interfaces/IBrands";
 
-export const getAllMarcas = async (
+export const getAllBrands = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
-    const marcas = await prisma.marca.findMany();
+    const marcas = await prisma.brands.findMany();
     return res.json(marcas);
   } catch (error) {
     return res.status(500).json({ error: "Erro ao buscar marcas" });
   }
 };
 
-export const getMarcaById = async (
+export const getBrandById = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
   try {
-    const marca = await prisma.marca.findUnique({
+    const marca = await prisma.brands.findUnique({
       where: { id: parseInt(id) },
     });
     if (!marca) {
@@ -32,14 +32,14 @@ export const getMarcaById = async (
   }
 };
 
-export const createMarca = async (
+export const createBrand = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { nome }: IMarca = req.body;
+  const { name }: IBrands = req.body;
   try {
-    const novaMarca = await prisma.marca.create({
-      data: { nome },
+    const novaMarca = await prisma.brands.create({
+      data: { name },
     });
     return res.status(201).json(novaMarca);
   } catch (error) {
@@ -47,16 +47,16 @@ export const createMarca = async (
   }
 };
 
-export const updateMarca = async (
+export const updateBrand = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
-  const { nome }: IMarca = req.body;
+  const { name }: IBrands = req.body;
   try {
-    const marcaAtualizada = await prisma.marca.update({
+    const marcaAtualizada = await prisma.brands.update({
       where: { id: parseInt(id) },
-      data: { nome },
+      data: { name },
     });
     return res.json(marcaAtualizada);
   } catch (error) {
@@ -64,14 +64,14 @@ export const updateMarca = async (
   }
 };
 
-export const deleteMarca = async (
+export const deleteBrand = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
   try {
-    const veiculos = await prisma.veiculo.findMany({
-      where: { id_marca: parseInt(id) },
+    const veiculos = await prisma.vehicles.findMany({
+      where: { id_brand: parseInt(id) },
     });
 
     if (veiculos.length > 0) {
@@ -80,7 +80,7 @@ export const deleteMarca = async (
       });
     }
 
-    await prisma.marca.delete({
+    await prisma.brands.delete({
       where: { id: parseInt(id) },
     });
     return res.status(204).send();

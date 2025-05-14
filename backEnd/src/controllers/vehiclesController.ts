@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
-import prisma from "../prismaClient";
-import { IVeiculo } from "../interfaces/IVeiculo";
+import prisma from "../prisma/client";
+import { IVehicles} from "../interfaces/Vehicles";
 
-export const getAllVeiculos = async (
+export const getAllVehicles = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   try {
-    const veiculos = await prisma.veiculo.findMany({
+    const veiculos = await prisma.vehicles.findMany({
       include: {
-        marca: true,
-        categoria: true,
+        brand: true,
+        category: true,
       },
     });
     return res.json(veiculos);
@@ -19,17 +19,17 @@ export const getAllVeiculos = async (
   }
 };
 
-export const getVeiculoById = async (
+export const getVehicleById = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
   try {
-    const veiculo = await prisma.veiculo.findUnique({
+    const veiculo = await prisma.vehicles.findUnique({
       where: { id: parseInt(id) },
       include: {
-        marca: true,
-        categoria: true,
+        brand: true,
+        category: true,
       },
     });
     if (!veiculo) {
@@ -41,35 +41,35 @@ export const getVeiculoById = async (
   }
 };
 
-export const createVeiculo = async (
+export const createVehicle = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { modelo, ano, preco_diaria, id_marca, id_categoria }: IVeiculo =
+  const { model, year, daily_price, id_brand, id_category }: IVehicles =
     req.body;
 
   try {
-    const marcaExiste = await prisma.marca.findUnique({
-      where: { id: id_marca },
+    const marcaExiste = await prisma.brands.findUnique({
+      where: { id: id_brand },
     });
     if (!marcaExiste) {
       return res.status(400).json({ error: "Marca não encontrada" });
     }
 
-    const categoriaExiste = await prisma.categoria.findUnique({
-      where: { id: id_categoria },
+    const categoriaExiste = await prisma.categorys.findUnique({
+      where: { id: id_category },
     });
     if (!categoriaExiste) {
       return res.status(400).json({ error: "Categoria não encontrada" });
     }
 
-    const novoVeiculo = await prisma.veiculo.create({
+    const novoVeiculo = await prisma.vehicles.create({
       data: {
-        modelo,
-        ano,
-        preco_diaria,
-        id_marca,
-        id_categoria,
+        model,
+        year,
+        daily_price,
+        id_brand,
+        id_category,
       },
     });
     return res.status(201).json(novoVeiculo);
@@ -78,48 +78,48 @@ export const createVeiculo = async (
   }
 };
 
-export const updateVeiculo = async (
+export const updateVehicle = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
-  const { modelo, ano, preco_diaria, id_marca, id_categoria }: IVeiculo =
+  const { model, year, daily_price, id_brand, id_category }: IVehicles =
     req.body;
 
   try {
-    const veiculoExiste = await prisma.veiculo.findUnique({
+    const veiculoExiste = await prisma.vehicles.findUnique({
       where: { id: parseInt(id) },
     });
     if (!veiculoExiste) {
       return res.status(404).json({ error: "Veículo não encontrado" });
     }
 
-    if (id_marca) {
-      const marcaExiste = await prisma.marca.findUnique({
-        where: { id: id_marca },
+    if (id_brand) {
+      const marcaExiste = await prisma.brands.findUnique({
+        where: { id: id_brand },
       });
       if (!marcaExiste) {
         return res.status(400).json({ error: "Marca não encontrada" });
       }
     }
 
-    if (id_categoria) {
-      const categoriaExiste = await prisma.categoria.findUnique({
-        where: { id: id_categoria },
+    if (id_category) {
+      const categoriaExiste = await prisma.categorys.findUnique({
+        where: { id: id_category },
       });
       if (!categoriaExiste) {
         return res.status(400).json({ error: "Categoria não encontrada" });
       }
     }
 
-    const veiculoAtualizado = await prisma.veiculo.update({
+    const veiculoAtualizado = await prisma.vehicles.update({
       where: { id: parseInt(id) },
       data: {
-        modelo,
-        ano,
-        preco_diaria,
-        id_marca,
-        id_categoria,
+        model,
+        year,
+        daily_price,
+        id_brand,
+        id_category,
       },
     });
     return res.json(veiculoAtualizado);
@@ -128,13 +128,13 @@ export const updateVeiculo = async (
   }
 };
 
-export const deleteVeiculo = async (
+export const deleteVehicle = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
   try {
-    await prisma.veiculo.delete({
+    await prisma.vehicles.delete({
       where: { id: parseInt(id) },
     });
     return res.status(204).send();
