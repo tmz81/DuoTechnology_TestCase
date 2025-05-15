@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import prisma from "../prisma/client";
 import { IUsers } from "../interfaces/IUsers";
-import { Users } from "@prisma/client";
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
@@ -22,7 +21,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const token = jwt.sign(
+    const authToken = jwt.sign(
       { id: user.id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET!,
       { expiresIn: "8h" }
@@ -35,7 +34,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         email: user.email,
         isAdmin: user.isAdmin,
       },
-      token,
+      authToken,
     });
   } catch (error) {
     console.error(error);
@@ -49,10 +48,10 @@ export const getCurrentUser = async (
 ): Promise<void> => {
   res.json({
     user: {
-      id: req.body.Users?.id,
-      name: req.body.user?.name,
-      email: req.body.user?.email,
-      isAdmin: req.body.user?.isAdmin,
+      id: req.Users?.id,
+      name: req.users?.name,
+      email: req.users?.email,
+      isAdmin: req.users?.isAdmin,
     },
   });
 };
@@ -61,7 +60,7 @@ export const createUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { name, email, password, isAdmin = false }: IUsers = req.body;
+  const { name, email, password, isAdmin }: IUsers = req.body;
   try {
     const emailExistente = await prisma.users.findUnique({ where: { email } });
     if (emailExistente) {

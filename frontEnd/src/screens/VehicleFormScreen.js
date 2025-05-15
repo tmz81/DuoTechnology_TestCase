@@ -20,7 +20,7 @@ const VehicleFormScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const token = await AsyncStorage.getItem("userToken");
+        const token = await AsyncStorage.getItem("authToken");
         const [brandsRes, categoriesRes] = await Promise.all([
           axios.get("SUA_API_URL/brands", {
             headers: { Authorization: `Bearer ${token}` },
@@ -41,7 +41,7 @@ const VehicleFormScreen = ({ route, navigation }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const token = await AsyncStorage.getItem("userToken");
+      const token = await AsyncStorage.getItem("authToken");
       const payload = {
         model: form.model,
         brand_id: form.brand,

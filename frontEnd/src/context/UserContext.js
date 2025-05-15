@@ -1,39 +1,33 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import {
-  login as authLogin,
-  logout as authLogout,
-} from "../services/authService";
+import { createContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const UserContext = createContext();
+export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authToken, setAuthToken] = useState(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem("userToken");
+  const loadUser = async () => {
+    const token = await AsyncStorage.getItem("authToken");
     if (token) {
-      // Fazer requisição para obter dados do usuário
-      // setUser(userData);
+      setAuthToken(token);
+      setUser({ isAdmin: false });
     }
-    setLoading(false);
-  }, []);
-
-  const login = async (credentials) => {
-    const userData = await authLogin(credentials);
-    setUser(userData);
   };
 
-  const logout = () => {
-    authLogout();
+  const logout = async () => {
+    await AsyncStorage.removeItem("authToken");
+    setAuthToken(null);
     setUser(null);
   };
 
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   return (
-    <UserContext.Provider value={{ user, loading, login, logout }}>
+    <UserContext.Provider value={{ user, authToken, setAuthToken, logout }}>
       {children}
     </UserContext.Provider>
   );
 };
-
-export const useUser = () => useContext(UserContext);

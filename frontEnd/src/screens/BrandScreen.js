@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, Alert, StyleSheet } from "react-native";
 import { List, FAB, ActivityIndicator } from "react-native-paper";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const VehicleListScreen = ({ navigation }) => {
-  const [vehicles, setVehicles] = useState([]);
+const BrandScreen = ({ navigation }) => {
+  const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchVehicles = async () => {
+  const fetchBrands = async () => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await axios.get("SUA_API_URL/vehicles", {
+      const token = await AsyncStorage.getItem("authToken");
+      const response = await axios.get("SUA_API_URL/brands", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setVehicles(response.data);
+      setBrands(response.data);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os veículos");
+      Alert.alert("Erro", "Não foi possível carregar as marcas");
     } finally {
       setLoading(false);
     }
@@ -24,18 +24,18 @@ const VehicleListScreen = ({ navigation }) => {
 
   const handleDelete = async (id) => {
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      await axios.delete(`SUA_API_URL/vehicles/${id}`, {
+      const token = await AsyncStorage.getItem("authToken");
+      await axios.delete(`SUA_API_URL/brands/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      fetchVehicles();
+      fetchBrands();
     } catch (error) {
-      Alert.alert("Erro", "Falha ao excluir veículo");
+      Alert.alert("Erro", "Falha ao excluir marca");
     }
   };
 
   useEffect(() => {
-    fetchVehicles();
+    fetchBrands();
   }, []);
 
   if (loading) {
@@ -49,23 +49,20 @@ const VehicleListScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <List.Section>
-        {vehicles.map((vehicle) => (
+        {brands.map((brand) => (
           <List.Item
-            key={vehicle.id}
-            title={vehicle.model}
-            description={`Marca: ${vehicle.brand} • Ano: ${vehicle.year}`}
-            left={() => <List.Icon icon="car" />}
+            key={brand.id}
+            title={brand.name}
+            left={() => <List.Icon icon="factory" />}
             right={() => (
               <View style={styles.actions}>
                 <List.Icon
                   icon="pencil"
-                  onPress={() =>
-                    navigation.navigate("VehicleForm", { vehicle })
-                  }
+                  onPress={() => navigation.navigate("BrandForm", { brand })}
                 />
                 <List.Icon
                   icon="delete"
-                  onPress={() => handleDelete(vehicle.id)}
+                  onPress={() => handleDelete(brand.id)}
                 />
               </View>
             )}
@@ -76,7 +73,7 @@ const VehicleListScreen = ({ navigation }) => {
       <FAB
         style={styles.fab}
         icon="plus"
-        onPress={() => navigation.navigate("VehicleForm")}
+        onPress={() => navigation.navigate("BrandForm")}
       />
     </View>
   );
@@ -84,7 +81,6 @@ const VehicleListScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 16,
   },
   loadingContainer: {
@@ -92,16 +88,34 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  actions: {
-    flexDirection: "row",
-    alignItems: "center",
+  Text: {
+    fontSize: 24,
+    marginBottom: 20,
+    fontWeight: "bold",
   },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  card: {
+    width: "48%",
+    elevation: 4,
+  },
+  cardText: {
+    fontSize: 16,
+    color: "#666",
+  },
+  cardValue: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 8,
+  },
+  sectionText: {
+    fontSize: 20,
+    marginVertical: 16,
+    color: "#444",
   },
 });
 
-export default VehicleListScreen;
+export default BrandScreen;

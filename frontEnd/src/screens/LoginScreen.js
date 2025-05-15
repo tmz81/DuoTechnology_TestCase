@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { Button, TextInput, Text } from "react-native-paper";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { login } from "../services/authService";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -26,13 +25,8 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const response = await axios.post("SUA_API_URL/login", {
-        email,
-        password,
-      });
-
-      await AsyncStorage.setItem("userToken", response.data.token);
-      navigation.replace("Home");
+      await login({ email, password });
+      navigation.replace("Main");
     } catch (error) {
       Alert.alert(
         "Erro",
@@ -72,6 +66,13 @@ const LoginScreen = ({ navigation }) => {
       >
         Entrar
       </Button>
+      <Button
+        mode="text"
+        onPress={() => navigation.navigate("Signup")}
+        style={styles.link}
+      >
+        Ainda não possui conta? Cadastra-se agora
+      </Button>
     </View>
   );
 };
@@ -92,6 +93,9 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  link: {
+    marginTop: 15,
   },
 });
 
