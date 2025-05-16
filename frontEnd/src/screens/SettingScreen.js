@@ -18,7 +18,7 @@ const SettingScreen = ({ navigation }) => {
 
   const fetchUserData = async () => {
     try {
-      const userData = await getUserProfile(); // Usando o serviço
+      const userData = await getUserProfile();
       setUser(userData);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível carregar os dados do usuário");
@@ -30,6 +30,10 @@ const SettingScreen = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await logout();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
     } catch (error) {
       Alert.alert("Erro", "Falha ao sair da conta");
     }

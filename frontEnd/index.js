@@ -1,8 +1,16 @@
-import { registerRootComponent } from 'expo';
+import { StrictMode } from "react";
+import { AppRegistry } from "react-native";
+import App from "./App";
+import { UserProvider } from "./src/context/UserContext";
 
-import App from './App';
+function Main() {
+  return (
+    <StrictMode>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </StrictMode>
+  );
+}
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
-registerRootComponent(App);
+AppRegistry.registerComponent("main", () => Main);

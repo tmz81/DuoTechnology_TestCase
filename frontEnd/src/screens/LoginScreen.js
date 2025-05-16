@@ -2,11 +2,16 @@ import { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { Button, TextInput, Text } from "react-native-paper";
 import { login } from "../services/authService";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const { login: loginContext } = useContext(UserContext);
 
   const validateForm = () => {
     if (!email.trim() || !password.trim()) {
@@ -25,8 +30,9 @@ const LoginScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      await login({ email, password });
-      navigation.replace("Main");
+      const userData = await login({ email, password });
+      const token = await AsyncStorage.getItem("authToken");
+      await loginContext(token, userData);
     } catch (error) {
       Alert.alert(
         "Erro",
