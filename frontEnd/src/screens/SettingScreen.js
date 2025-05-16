@@ -1,31 +1,10 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import { View, Alert, StyleSheet } from "react-native";
-import {
-  List,
-  Avatar,
-  Text,
-  Button,
-  ActivityIndicator,
-} from "react-native-paper";
-import { getUserProfile } from "../services/authService";
+import { List, Avatar, Text, Button } from "react-native-paper";
 import { UserContext } from "../context/UserContext";
 
 const SettingScreen = ({ navigation }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const { logout } = useContext(UserContext);
-
-  const fetchUserData = async () => {
-    try {
-      const userData = await getUserProfile();
-      setUser(userData);
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os dados do usuário");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { user, logout } = useContext(UserContext);
 
   const handleLogout = async () => {
     try {
@@ -38,18 +17,6 @@ const SettingScreen = ({ navigation }) => {
       Alert.alert("Erro", "Falha ao sair da conta");
     }
   };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>

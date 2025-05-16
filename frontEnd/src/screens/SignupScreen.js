@@ -2,7 +2,6 @@ import { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { Button, TextInput, Text, Switch } from "react-native-paper";
 import { register } from "../services/authService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState("");
