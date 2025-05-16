@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
 import { Card, List, Text, ActivityIndicator } from "react-native-paper";
+import { getTotal } from "../services/homeService";
 
 const MainScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -14,10 +15,9 @@ const MainScreen = ({ navigation }) => {
 
   const fetchData = async () => {
     try {
-      const totalsResponse = await getAllVehicles();
-
-      setTotals(totalsResponse.data);
-      setRecentVehicles(recentResponse.data);
+      const totalsResponse = await getTotal();
+      setTotals(totalsResponse);
+      // setRecentVehicles(recentResponse.data);
     } catch (error) {
       Alert.alert("Erro", "Falha ao buscar dados");
     } finally {
@@ -57,14 +57,14 @@ const MainScreen = ({ navigation }) => {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.cardText}>Veículos</Text>
-            <Text style={styles.cardValue}>{totals.vehicles}</Text>
+            <Text style={styles.cardValue}>{totals?.vehicles ?? 0}</Text>
           </Card.Content>
         </Card>
 
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.cardText}>Marcas</Text>
-            <Text style={styles.cardValue}>{totals.brands}</Text>
+            <Text style={styles.cardValue}>{totals?.brands ?? 0}</Text>
           </Card.Content>
         </Card>
       </View>
@@ -73,7 +73,7 @@ const MainScreen = ({ navigation }) => {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.cardText}>Categorias</Text>
-            <Text style={styles.cardValue}>{totals.categories}</Text>
+            <Text style={styles.cardValue}>{totals?.categories ?? 0}</Text>
           </Card.Content>
         </Card>
       </View>
