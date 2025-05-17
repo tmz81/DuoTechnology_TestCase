@@ -9,11 +9,11 @@ export interface IVehicles {
   daily_price: number;
   id_brand: number;
   id_category: number;
-  id_user?: number | null;
+  id_user: number;
 }
 
 export interface IVehiculesWithRelations extends IVehicles {
   brand?: IBrands;
   category?: ICategorys;
-  user?: IUsers | null;
+  user?: IUsers;
 }

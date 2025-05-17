@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, ScrollView, Alert } from "react-native";
 import { Button, TextInput, Text, ActivityIndicator } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
-import { createVehicle, updateVehicle } from "../services/vehiclesService";
-import { getAllBrands } from "../services/brandsService";
-import { getAllCategorys } from "../services/categorysService";
+import { createVehicle, updateVehicle } from "../../services/vehiclesService";
+import { getAllBrands } from "../../services/brandsService";
+import { getAllCategorys } from "../../services/categorysService";
+import { UserContext } from "../../context/UserContext";
 
-const VehicleFormScreen = ({ route, navigation }) => {
+const VehicleForm = ({ route, navigation }) => {
   const { vehicle } = route.params || {};
+  const { user } = useContext(UserContext);
 
   const [form, setForm] = useState({
     model: vehicle?.model || "",
@@ -15,7 +17,7 @@ const VehicleFormScreen = ({ route, navigation }) => {
     category_id: vehicle?.category?.id || "",
     year: vehicle?.year?.toString() || "",
     daily_price: vehicle?.daily_price?.toString() || "",
-    available: vehicle?.available ?? true,
+    user_id: user.id,
   });
 
   const [loading, setLoading] = useState(false);
@@ -42,16 +44,31 @@ const VehicleFormScreen = ({ route, navigation }) => {
     fetchOptions();
   }, []);
 
+  const formatarPreco = (valor) => {
+    const apenasNumeros = valor.replace(/\D/g, "");
+    const numero = parseFloat(apenasNumeros) / 100;
+    if (isNaN(numero)) return "R$ 0,00";
+    return numero.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
+
+  const extrairValorNumerico = (valor) => {
+    const apenasNumeros = valor.replace(/\D/g, "");
+    return parseFloat(apenasNumeros) / 100;
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const payload = {
         model: form.model,
-        brand_id: form.brand_id,
-        category_id: form.category_id,
+        id_brand: form.brand_id,
+        id_category: form.category_id,
         year: parseInt(form.year),
-        daily_price: parseFloat(form.daily_price),
-        available: form.available,
+        daily_price: extrairValorNumerico(form.daily_price),
+        id_user: user.id,
       };
 
       if (vehicle) {
@@ -95,7 +112,6 @@ const VehicleFormScreen = ({ route, navigation }) => {
         mode="outlined"
       />
 
-      <Text style={styles.label}>Marca</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={form.brand_id}
@@ -109,7 +125,6 @@ const VehicleFormScreen = ({ route, navigation }) => {
         </Picker>
       </View>
 
-      <Text style={styles.label}>Categoria</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={form.category_id}
@@ -130,7 +145,12 @@ const VehicleFormScreen = ({ route, navigation }) => {
       <TextInput
         label="Ano"
         value={form.year}
-        onChangeText={(text) => setForm({ ...form, year: text })}
+        onChangeText={(text) => {
+          const somenteNumeros = text.replace(/\D/g, "");
+          if (somenteNumeros.length <= 4) {
+            setForm({ ...form, year: somenteNumeros });
+          }
+        }}
         keyboardType="numeric"
         style={styles.input}
         mode="outlined"
@@ -139,7 +159,10 @@ const VehicleFormScreen = ({ route, navigation }) => {
       <TextInput
         label="Preço Diário"
         value={form.daily_price}
-        onChangeText={(text) => setForm({ ...form, daily_price: text })}
+        onChangeText={(text) => {
+          const formatado = formatarPreco(text);
+          setForm({ ...form, daily_price: formatado });
+        }}
         keyboardType="numeric"
         style={styles.input}
         mode="outlined"
@@ -208,4 +231,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VehicleFormScreen;
+export default VehicleForm;

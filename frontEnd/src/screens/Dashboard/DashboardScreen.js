@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
 import { Card, List, Text, ActivityIndicator } from "react-native-paper";
-import { getTotal } from "../services/homeService";
+import { getTotal } from "../../services/homeService";
 
-const MainScreen = ({ navigation }) => {
+const DashboardScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [totals, setTotals] = useState({
@@ -135,4 +135,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainScreen;
+export default DashboardScreen;

@@ -1,12 +1,15 @@
 import { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
-import { Button, Card, Text, FAB, ActivityIndicator } from "react-native-paper";
+import { Button, Text, Card, FAB, ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { UserContext } from "../context/UserContext";
-import { getAllVehicles, deleteVehicle } from "../services/vehiclesService";
+import { UserContext } from "../../context/UserContext";
+import {
+  getAllCategorys,
+  deleteCategory,
+} from "../../services/categorysService";
 
-const VehicleScreen = () => {
-  const [vehicles, setVehicles] = useState([]);
+const CategoryScreen = () => {
+  const [categorys, setCategorys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(UserContext);
@@ -14,36 +17,36 @@ const VehicleScreen = () => {
 
   const isAdmin = user?.isAdmin || false;
 
-  const loadVehicles = async () => {
+  const loadCategorys = async () => {
     try {
-      const data = await getAllVehicles();
-      setVehicles(data);
+      const data = await getAllCategorys();
+      setCategorys(data);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os veículos");
+      Alert.alert("Erro", "Não foi possível carregar as categorias");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   };
-  console.log('State Hi ====> ', vehicles)
+
   useEffect(() => {
-    loadVehicles();
+    loadCategorys();
   }, []);
 
   const handleDelete = async (id) => {
     Alert.alert(
       "Confirmar exclusão",
-      "Tem certeza que deseja excluir este veículo?",
+      "Tem certeza que deseja excluir esta categoria?",
       [
         { text: "Cancelar", style: "cancel" },
         {
           text: "Excluir",
           onPress: async () => {
             try {
-              await deleteVehicle(id);
-              loadVehicles();
+              await deleteCategory(id);
+              loadCategorys();
             } catch (error) {
-              Alert.alert("Erro", "Falha ao excluir veículo");
+              Alert.alert("Erro", "Falha ao excluir categoria");
             }
           },
         },
@@ -53,18 +56,12 @@ const VehicleScreen = () => {
 
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
-      <Card.Title
-        title={item.model}
-        subtitle={`Marca: ${item.brand.name} • Ano: ${item.year}`}
-      />
-      <Card.Content>
-        <Text variant="bodyMedium">Categoria: {item.category.description}</Text>
-      </Card.Content>
+      <Text>{item.description}</Text>
       {isAdmin && (
         <Card.Actions>
           <Button
             onPress={() =>
-              navigation.navigate("VehicleFormScreen", { vehicle: item })
+              navigation.navigate("CategoryForm", { category: item })
             }
           >
             Editar
@@ -84,13 +81,13 @@ const VehicleScreen = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={vehicles}
+        data={categorys}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         refreshing={refreshing}
         onRefresh={() => {
           setRefreshing(true);
-          loadVehicles();
+          loadCategorys();
         }}
       />
 
@@ -98,7 +95,7 @@ const VehicleScreen = () => {
         <FAB
           style={styles.fab}
           icon="plus"
-          onPress={() => navigation.navigate("VehicleFormScreen")}
+          onPress={() => navigation.navigate("CategoryForm")}
         />
       )}
     </View>
@@ -126,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VehicleScreen;
+export default CategoryScreen;

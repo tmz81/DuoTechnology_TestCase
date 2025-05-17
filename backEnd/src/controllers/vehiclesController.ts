@@ -63,6 +63,11 @@ export const createVehicle = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  if (!req.body) {
+    res.status(400).json({ error: "Requisição sem corpo (body) válido" });
+    return;
+  }
+
   const {
     model,
     year,
@@ -71,6 +76,13 @@ export const createVehicle = async (
     id_category,
     id_user,
   }: IVehicles = req.body;
+
+  console.log("body da aplicação: ", req.body)
+
+  if (!model || !year || !daily_price || !id_brand || !id_category || !id_user) {
+    res.status(400).json({ error: "Campos obrigatórios ausentes" });
+    return;
+  }
 
   try {
     const marcaExiste = await prisma.brands.findUnique({
@@ -85,6 +97,7 @@ export const createVehicle = async (
     const categoriaExiste = await prisma.categorys.findUnique({
       where: { id: id_category },
     });
+
     if (!categoriaExiste) {
       res.status(400).json({ error: "Categoria não encontrada" });
       return;

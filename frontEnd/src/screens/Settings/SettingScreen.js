@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { View, Alert, StyleSheet } from "react-native";
 import { List, Avatar, Text, Button } from "react-native-paper";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 
 const SettingScreen = ({ navigation }) => {
   const { user, logout } = useContext(UserContext);

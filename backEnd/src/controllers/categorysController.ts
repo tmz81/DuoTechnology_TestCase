@@ -37,6 +37,7 @@ export const createCategory = async (
   res: Response
 ): Promise<void> => {
   const { description }: ICategorys = req.body;
+  console.log('AQUI =====> ', req.body)
   try {
     const novaCategoria = await prisma.categorys.create({
       data: { description },

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { Button, TextInput, Text, Switch } from "react-native-paper";
-import { register } from "../services/authService";
+import { register } from "../../services/authService";
 
 const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -37,7 +37,7 @@ const SignupScreen = ({ navigation }) => {
         email,
         password,
         password_confirmation: confirmPassword,
-        is_admin: isAdmin
+        isAdmin: isAdmin,
       });
 
       Alert.alert("Sucesso", "Cadastro realizado com sucesso!", [

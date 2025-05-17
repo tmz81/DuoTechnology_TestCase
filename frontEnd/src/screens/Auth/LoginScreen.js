@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { Button, TextInput, Text } from "react-native-paper";
-import { login } from "../services/authService";
+import { login } from "../../services/authService";
 import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
