@@ -3,7 +3,7 @@ import { View, StyleSheet, FlatList, Alert } from "react-native";
 import { Button, Card, Text, FAB, ActivityIndicator } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../context/UserContext";
-import { getVehicles, deleteVehicle } from "../services/vehiclesService";
+import { getAllVehicles, deleteVehicle } from "../services/vehiclesService";
 
 const VehicleScreen = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -16,7 +16,7 @@ const VehicleScreen = () => {
 
   const loadVehicles = async () => {
     try {
-      const data = await getVehicles();
+      const data = await getAllVehicles();
       setVehicles(data);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível carregar os veículos");
@@ -25,7 +25,7 @@ const VehicleScreen = () => {
       setRefreshing(false);
     }
   };
-
+  console.log('State Hi ====> ', vehicles)
   useEffect(() => {
     loadVehicles();
   }, []);
@@ -55,17 +55,16 @@ const VehicleScreen = () => {
     <Card style={styles.card}>
       <Card.Title
         title={item.model}
-        subtitle={`Marca: ${item.brand} • Ano: ${item.year}`}
+        subtitle={`Marca: ${item.brand.name} • Ano: ${item.year}`}
       />
       <Card.Content>
-        <Text variant="bodyMedium">Placa: {item.licensePlate}</Text>
-        <Text variant="bodyMedium">Categoria: {item.category}</Text>
+        <Text variant="bodyMedium">Categoria: {item.category.description}</Text>
       </Card.Content>
       {isAdmin && (
         <Card.Actions>
           <Button
             onPress={() =>
-              navigation.navigate("VehicleForm", { vehicle: item })
+              navigation.navigate("VehicleFormScreen", { vehicle: item })
             }
           >
             Editar
@@ -99,7 +98,7 @@ const VehicleScreen = () => {
         <FAB
           style={styles.fab}
           icon="plus"
-          onPress={() => navigation.navigate("VehicleForm")}
+          onPress={() => navigation.navigate("VehicleFormScreen")}
         />
       )}
     </View>
