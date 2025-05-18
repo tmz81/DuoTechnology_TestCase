@@ -7,6 +7,7 @@ import {
   TextInput,
   FAB,
   ActivityIndicator,
+  Divider,
 } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
@@ -29,27 +30,11 @@ const VehicleScreen = () => {
       setVehicles(data);
       setFilteredVehicles(data);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os veículos");
+      Alert.alert("Erro", "Não foi possível carregar os veículos.");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  };
-
-  const applyGeneralFilter = () => {
-    const lower = searchText.toLowerCase();
-
-    const filtered = vehicles.filter((v) => {
-      return (
-        v.model.toLowerCase().includes(lower) ||
-        v.brand.name.toLowerCase().includes(lower) ||
-        v.category.description.toLowerCase().includes(lower) ||
-        String(v.year).includes(lower) ||
-        String(v.price).includes(lower)
-      );
-    });
-
-    setFilteredVehicles(filtered);
   };
 
   useEffect(() => {
@@ -57,7 +42,16 @@ const VehicleScreen = () => {
   }, []);
 
   useEffect(() => {
-    applyGeneralFilter();
+    const lower = searchText.toLowerCase();
+    const filtered = vehicles.filter(
+      (v) =>
+        v.model.toLowerCase().includes(lower) ||
+        v.brand.name.toLowerCase().includes(lower) ||
+        v.category.description.toLowerCase().includes(lower) ||
+        String(v.year).includes(lower) ||
+        String(v.price).includes(lower)
+    );
+    setFilteredVehicles(filtered);
   }, [searchText, vehicles]);
 
   const handleDelete = async (id) => {
@@ -68,12 +62,13 @@ const VehicleScreen = () => {
         { text: "Cancelar", style: "cancel" },
         {
           text: "Excluir",
+          style: "destructive",
           onPress: async () => {
             try {
               await deleteVehicle(id);
               loadVehicles();
             } catch (error) {
-              Alert.alert("Erro", "Falha ao excluir veículo");
+              Alert.alert("Erro", "Falha ao excluir veículo.");
             }
           },
         },
@@ -82,7 +77,7 @@ const VehicleScreen = () => {
   };
 
   const renderItem = ({ item }) => (
-    <Card style={styles.card}>
+    <Card style={styles.card} mode="outlined">
       <Card.Cover
         source={{ uri: `https://picsum.photos/seed/${item.id}/400/200` }}
       />
@@ -92,17 +87,27 @@ const VehicleScreen = () => {
       />
       <Card.Content>
         <Text variant="bodyMedium">Categoria: {item.category.description}</Text>
+        <Text variant="bodyMedium">
+          Preço: R$ {Number(item.daily_price).toFixed(2)}
+        </Text>
       </Card.Content>
+
       {isAdmin && (
-        <Card.Actions>
+        <Card.Actions style={styles.actions}>
           <Button
+            mode="contained"
             onPress={() =>
-              navigation.navigate("VehicleFormScreen", { vehicle: item })
+              navigation.navigate("VehicleForm", { vehicle: item })
             }
+            style={styles.editButton}
           >
             Editar
           </Button>
-          <Button onPress={() => handleDelete(item.id)} style={styles.button}>
+          <Button
+            mode="contained"
+            onPress={() => handleDelete(item.id)}
+            style={styles.deleteButton}
+          >
             Excluir
           </Button>
         </Card.Actions>
@@ -111,36 +116,50 @@ const VehicleScreen = () => {
   );
 
   if (loading) {
-    return <ActivityIndicator style={styles.loader} animating={true} />;
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator animating size="large" />
+        <Text style={{ marginTop: 10 }}>Carregando veículos...</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
       <TextInput
-        label="Filtrar veículo..."
+        label="Buscar veículo..."
         value={searchText}
         onChangeText={setSearchText}
         style={styles.input}
         mode="outlined"
-        placeholder="Modelos, Marcas, Categorias, Anos ou Preços"
+        placeholder="Digite modelo, marca, ano ou preço"
+        returnKeyType="search"
       />
 
-      <FlatList
-        data={filteredVehicles}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        refreshing={refreshing}
-        onRefresh={() => {
-          setRefreshing(true);
-          loadVehicles();
-        }}
-      />
+      {filteredVehicles.length === 0 ? (
+        <Text style={styles.emptyText}>Nenhum veículo encontrado.</Text>
+      ) : (
+        <FlatList
+          data={filteredVehicles}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            loadVehicles();
+          }}
+          ItemSeparatorComponent={() => (
+            <Divider style={{ marginVertical: 5 }} />
+          )}
+        />
+      )}
 
       {isAdmin && (
         <FAB
-          style={styles.fab}
           icon="plus"
-          onPress={() => navigation.navigate("VehicleFormScreen")}
+          style={styles.fab}
+          onPress={() => navigation.navigate("VehicleForm")}
+          label="Novo"
         />
       )}
     </View>
@@ -152,27 +171,39 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
-  card: {
-    margin: 5,
-  },
   loader: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  card: {
+    marginBottom: 10,
+  },
+  actions: {
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  editButton: {
+    backgroundColor: "#2a9d8f",
+  },
+  deleteButton: {
+    backgroundColor: "#e63946",
+  },
   fab: {
     position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
+    right: 16,
+    bottom: 16,
   },
   input: {
     marginBottom: 10,
   },
-  button: {
-    color: "#FFF",
-    backgroundColor: "#ff0000"
-  }
+  emptyText: {
+    marginTop: 30,
+    textAlign: "center",
+    fontSize: 16,
+    color: "#777",
+  },
 });
 
 export default VehicleScreen;

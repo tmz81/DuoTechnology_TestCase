@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { Button, TextInput, Text, ActivityIndicator } from "react-native-paper";
 import {
   getAllBrands,
@@ -63,42 +70,64 @@ const BrandForm = ({ route, navigation }) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>
-        {brand ? "Editar Marca" : "Adicionar Nova Marca"}
-      </Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.card}>
+          <Text style={styles.title}>
+            {brand ? "Editar Marca" : "Nova Marca"}
+          </Text>
 
-      <TextInput
-        label="Nome da Marca"
-        value={name}
-        onChangeText={setName}
-        style={styles.input}
-        mode="outlined"
-      />
+          <TextInput
+            label="Nome da Marca"
+            value={name}
+            onChangeText={setName}
+            style={styles.input}
+            mode="outlined"
+            placeholder="Digite o nome da marca"
+            autoCapitalize="words"
+          />
 
-      <Button
-        mode="contained"
-        onPress={handleSubmit}
-        loading={loading}
-        disabled={loading}
-        style={styles.button}
-        contentStyle={styles.buttonContent}
-      >
-        {brand ? "Atualizar Marca" : "Cadastrar Marca"}
-      </Button>
-    </ScrollView>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            loading={loading}
+            disabled={loading || name.trim() === ""}
+            style={styles.button}
+            contentStyle={styles.buttonContent}
+          >
+            {brand ? "Atualizar" : "Cadastrar"}
+          </Button>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
     padding: 20,
-    paddingBottom: 40,
+    backgroundColor: "#f5f6fa",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f5f6fa",
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 24,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
   title: {
     fontSize: 22,
@@ -112,12 +141,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   button: {
-    marginTop: 20,
-    paddingVertical: 8,
-    borderRadius: 4,
+    marginTop: 10,
+    borderRadius: 8,
   },
   buttonContent: {
-    height: 46,
+    height: 50,
   },
 });
 

@@ -8,6 +8,7 @@ import CategoryScreen from "../screens/Category/CategoryScreen";
 import SettingScreen from "../screens/Settings/SettingScreen";
 import BrandForm from "../screens/Brands/BrandForm";
 import CategoryForm from "../screens/Category/CategoryForm";
+import Icon from "@react-native-vector-icons/material-design-icons";
 
 const Tab = createBottomTabNavigator();
 const VehicleStack = createStackNavigator();
@@ -20,12 +21,12 @@ function VehicleStackScreen() {
       <VehicleStack.Screen
         name="VehicleList"
         component={VehicleScreen}
-        options={{ title: "Veículos" }}
+        options={{ title: "" }}
       />
       <VehicleStack.Screen
         name="VehicleForm"
         component={VehicleForm}
-        options={{ title: "Formulário do Veículo" }}
+        options={{ title: "" }}
       />
     </VehicleStack.Navigator>
   );
@@ -37,12 +38,12 @@ function BrandStackScreen() {
       <BrandStack.Screen
         name="BrandList"
         component={BrandScreen}
-        options={{ title: "Marcas" }}
+        options={{ title: "" }}
       />
       <BrandStack.Screen
         name="BrandForm"
         component={BrandForm}
-        options={{ title: "Formulário da Marca" }}
+        options={{ title: "" }}
       />
     </BrandStack.Navigator>
   );
@@ -54,12 +55,12 @@ function CategoryStackScreen() {
       <CategoryStack.Screen
         name="CategortList"
         component={CategoryScreen}
-        options={{ title: "Categoria" }}
+        options={{ title: "" }}
       />
       <CategoryStack.Screen
         name="CategoryForm"
         component={CategoryForm}
-        options={{ title: "Formulário de Categoria" }}
+        options={{ title: "" }}
       />
     </CategoryStack.Navigator>
   );
@@ -68,26 +69,55 @@ function CategoryStackScreen() {
 export default function MainNavigator() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon name="home" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Vehicles"
         component={VehicleStackScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon name="car" size={size} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="Brands"
         component={BrandStackScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon name="abugida-thai" size={size} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="Categorys"
         component={CategoryStackScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon name="abacus" size={size} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <Icon name="cog" size={size} color={color} />
+          ),
+        }}
       />
     </Tab.Navigator>
   );

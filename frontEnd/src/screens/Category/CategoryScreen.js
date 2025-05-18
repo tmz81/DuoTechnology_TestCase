@@ -1,6 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
-import { Button, Text, Card, FAB, ActivityIndicator } from "react-native-paper";
+import {
+  Button,
+  Text,
+  Card,
+  FAB,
+  ActivityIndicator,
+  IconButton,
+} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
 import {
@@ -55,22 +62,31 @@ const CategoryScreen = () => {
   };
 
   const renderItem = ({ item }) => (
-    <Card style={styles.card}>
-      <Text>{item.description}</Text>
-      {isAdmin && (
-        <Card.Actions>
-          <Button
-            onPress={() =>
-              navigation.navigate("CategoryForm", { category: item })
-            }
-          >
-            Editar
-          </Button>
-          <Button onPress={() => handleDelete(item.id)} style={styles.button}>
-            Excluir
-          </Button>
-        </Card.Actions>
-      )}
+    <Card style={styles.card} mode="contained">
+      <Card.Content style={styles.cardContent}>
+        <Text style={styles.categoryTitle}>{item.description}</Text>
+
+        {isAdmin && (
+          <View style={styles.actions}>
+            <IconButton
+              icon="pencil"
+              iconColor="#fff"
+              size={20}
+              style={[styles.iconButton, styles.editButton]}
+              onPress={() =>
+                navigation.navigate("CategoryForm", { category: item })
+              }
+            />
+            <IconButton
+              icon="delete"
+              iconColor="#fff"
+              size={20}
+              style={[styles.iconButton, styles.deleteButton]}
+              onPress={() => handleDelete(item.id)}
+            />
+          </View>
+        )}
+      </Card.Content>
     </Card>
   );
 
@@ -105,26 +121,54 @@ const CategoryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-  },
-  card: {
-    margin: 5,
+    padding: 12,
+    backgroundColor: "#f4f4f4",
   },
   loader: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  card: {
+    marginVertical: 8,
+    borderRadius: 16,
+    elevation: 3,
+    backgroundColor: "#fff",
+  },
+  cardContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  categoryTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+    flex: 1,
+  },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  iconButton: {
+    margin: 0,
+    borderRadius: 8,
+  },
+  editButton: {
+    backgroundColor: "#6c63ff",
+  },
+  deleteButton: {
+    backgroundColor: "#ff3b30",
+    marginLeft: 6,
+  },
   fab: {
     position: "absolute",
     margin: 16,
     right: 0,
     bottom: 0,
+    backgroundColor: "#6c63ff",
   },
-    button: {
-    color: "#FFF",
-    backgroundColor: "#ff0000"
-  }
 });
 
 export default CategoryScreen;
