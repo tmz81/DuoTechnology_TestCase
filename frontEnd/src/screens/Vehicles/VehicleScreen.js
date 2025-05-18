@@ -1,12 +1,21 @@
 import { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
-import { Button, Card, Text, FAB, ActivityIndicator } from "react-native-paper";
+import {
+  Button,
+  Card,
+  Text,
+  TextInput,
+  FAB,
+  ActivityIndicator,
+} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
 import { getAllVehicles, deleteVehicle } from "../../services/vehiclesService";
 
 const VehicleScreen = () => {
   const [vehicles, setVehicles] = useState([]);
+  const [filteredVehicles, setFilteredVehicles] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(UserContext);
@@ -18,6 +27,7 @@ const VehicleScreen = () => {
     try {
       const data = await getAllVehicles();
       setVehicles(data);
+      setFilteredVehicles(data);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível carregar os veículos");
     } finally {
@@ -25,9 +35,30 @@ const VehicleScreen = () => {
       setRefreshing(false);
     }
   };
+
+  const applyGeneralFilter = () => {
+    const lower = searchText.toLowerCase();
+
+    const filtered = vehicles.filter((v) => {
+      return (
+        v.model.toLowerCase().includes(lower) ||
+        v.brand.name.toLowerCase().includes(lower) ||
+        v.category.description.toLowerCase().includes(lower) ||
+        String(v.year).includes(lower) ||
+        String(v.price).includes(lower)
+      );
+    });
+
+    setFilteredVehicles(filtered);
+  };
+
   useEffect(() => {
     loadVehicles();
   }, []);
+
+  useEffect(() => {
+    applyGeneralFilter();
+  }, [searchText, vehicles]);
 
   const handleDelete = async (id) => {
     Alert.alert(
@@ -82,8 +113,17 @@ const VehicleScreen = () => {
 
   return (
     <View style={styles.container}>
+      <TextInput
+        label="Filtrar veículo..."
+        value={searchText}
+        onChangeText={setSearchText}
+        style={styles.input}
+        mode="outlined"
+        placeholder="Modelos, Marcas, Categorias, Anos ou Preços"
+      />
+
       <FlatList
-        data={vehicles}
+        data={filteredVehicles}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         refreshing={refreshing}
@@ -122,6 +162,9 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+  },
+  input: {
+    marginBottom: 10,
   },
 });
 

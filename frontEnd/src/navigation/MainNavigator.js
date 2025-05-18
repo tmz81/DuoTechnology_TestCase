@@ -2,7 +2,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/Dashboard/DashboardScreen";
 import VehicleScreen from "../screens/Vehicles/VehicleScreen";
-import VehicleFormScreen from "../screens/Vehicles/VehicleForm";
+import VehicleForm from "../screens/Vehicles/VehicleForm";
 import BrandScreen from "../screens/Brands/BrandScreen";
 import CategoryScreen from "../screens/Category/CategoryScreen";
 import SettingScreen from "../screens/Settings/SettingScreen";
@@ -23,8 +23,8 @@ function VehicleStackScreen() {
         options={{ title: "Veículos" }}
       />
       <VehicleStack.Screen
-        name="VehicleFormScreen"
-        component={VehicleFormScreen}
+        name="VehicleForm"
+        component={VehicleForm}
         options={{ title: "Formulário do Veículo" }}
       />
     </VehicleStack.Navigator>
