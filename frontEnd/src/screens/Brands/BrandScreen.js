@@ -61,7 +61,7 @@ const BrandScreen = () => {
           >
             Editar
           </Button>
-          <Button onPress={() => handleDelete(item.id)} textColor="#ff0000">
+          <Button onPress={() => handleDelete(item.id)} style={styles.button}>
             Excluir
           </Button>
         </Card.Actions>
@@ -115,6 +115,10 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+  },
+  button: {
+    color: "#FFF",
+    backgroundColor: "#ff0000",
   },
 });
 
