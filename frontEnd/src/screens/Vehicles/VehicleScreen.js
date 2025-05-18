@@ -83,6 +83,9 @@ const VehicleScreen = () => {
 
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
+      <Card.Cover
+        source={{ uri: `https://picsum.photos/seed/${item.id}/400/200` }}
+      />
       <Card.Title
         title={item.model}
         subtitle={`Marca: ${item.brand.name} • Ano: ${item.year}`}

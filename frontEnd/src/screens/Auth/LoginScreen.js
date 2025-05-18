@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, Keyboard } from "react-native";
 import { Button, TextInput, Text } from "react-native-paper";
 import { login } from "../../services/authService";
 import { useContext } from "react";
@@ -27,7 +27,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!validateForm()) return;
-
+    Keyboard.dismiss()
     setLoading(true);
     try {
       const userData = await login({ email, password });
