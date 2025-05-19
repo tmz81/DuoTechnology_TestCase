@@ -150,6 +150,101 @@ npm install
 npx expo start
 ```
 
+---
+
+### ⚠️ Importante
+
+- Certifique-se de que o celular/emulador esteja **na mesma rede Wi-Fi** do computador que está executando o backend.
+- Se estiver usando emulador Android via Android Studio, a baseURL pode ser diferente.
+- Se estiver usando o **Expo Go** no celular físico, o IP local é **obrigatório**.
+
+## 🌐 Configurando a baseURL da API
+
+Para o frontend mobile (React Native) se comunicar com o backend local, você precisa alterar a **baseURL** usada nas requisições da API.
+
+### 📁 Onde alterar?
+
+A `baseURL` está localizada em:
+
+```
+frontEnd/src/services/api.js
+```
+
+## 🖥️ Como descobrir seu IP local
+
+### 🔧 No **Ubuntu/Linux**
+
+Execute no terminal:
+
+```bash
+ip addr show
+```
+
+Procure a interface de rede que está conectada (geralmente `wlan0` para Wi-Fi ou `eth0` para cabo). O IP local geralmente aparece assim:
+
+```
+inet 192.168.1.100/24
+```
+
+Nesse exemplo, a baseURL seria:
+
+```javascript
+baseURL: "http://192.168.1.100:3000";
+```
+
+---
+
+### 🪟 No **Windows**
+
+1. Pressione `Win + R`, digite `cmd` e pressione Enter.
+2. No prompt de comando, digite:
+
+```cmd
+ipconfig
+```
+
+3. Procure a seção “Adaptador de Rede sem Fio” ou “Ethernet” e localize o campo:
+
+```
+Endereço IPv4: 192.168.1.105
+```
+
+Use esse IP como baseURL:
+
+```javascript
+baseURL: "http://192.168.1.105:3000";
+```
+
+---
+
+### 🍎 No **macOS**
+
+1. Abra o Terminal e digite:
+
+```bash
+ipconfig getifaddr en0
+```
+
+> Para conexões via cabo (Ethernet), use `en1`:
+
+```bash
+ipconfig getifaddr en1
+```
+
+2. Você verá algo como:
+
+```
+192.168.1.110
+```
+
+Use assim:
+
+```javascript
+baseURL: "http://192.168.1.110:3000";
+```
+
+---
+
 ## 🧪 API Documentation
 
 - Todas as coleções pré-configuradas
