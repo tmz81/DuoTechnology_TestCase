@@ -12,6 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
 import { getAllVehicles, deleteVehicle } from "../../services/vehiclesService";
+import VehicleImage from "../../../assets/Onix.jpeg"
 
 const VehicleScreen = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -79,7 +80,7 @@ const VehicleScreen = () => {
   const renderItem = ({ item }) => (
     <Card style={styles.card} mode="outlined">
       <Card.Cover
-        source={{ uri: `https://picsum.photos/seed/${item.id}/400/200` }}
+        source={VehicleImage}
       />
       <Card.Title
         title={item.model}
