@@ -5,7 +5,7 @@ import requestLogger from "./middlewares/requestLogger";
 import categoryRoutes from "./routes/categoryRoutes";
 import brandsRoutes from "./routes/brandsRoutes";
 import vehiclesRoutes from "./routes/vehiclesRoutes";
-import homeRoutes from "./routes/homeRoutes";
+import dashboardRoutes from "./routes/dashboardRoutes";
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/total", homeRoutes);
+app.use("/dashboard", dashboardRoutes);
 app.use("/vehicles", vehiclesRoutes);
 app.use("/brands", brandsRoutes);
 app.use("/categorys", categoryRoutes);

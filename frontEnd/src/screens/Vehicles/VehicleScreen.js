@@ -1,4 +1,5 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
 import {
   Button,
@@ -12,10 +13,12 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
 import { getAllVehicles, deleteVehicle } from "../../services/vehiclesService";
-import VehicleImage from "../../../assets/Onix.jpeg"
+import VehicleImage from "../../../assets/vehicleDefault.png";
+import { getTotal } from "../../services/homeService";
 
 const VehicleScreen = () => {
   const [vehicles, setVehicles] = useState([]);
+  const [vehiclesRecents, setVehiclesRecents] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
@@ -28,7 +31,9 @@ const VehicleScreen = () => {
   const loadVehicles = async () => {
     try {
       const data = await getAllVehicles();
+      const dataTwo = await getTotal();
       setVehicles(data);
+      setVehiclesRecents(dataTwo);
       setFilteredVehicles(data);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível carregar os veículos.");
@@ -38,9 +43,11 @@ const VehicleScreen = () => {
     }
   };
 
-  useEffect(() => {
-    loadVehicles();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadVehicles();
+    }, [])
+  );
 
   useEffect(() => {
     const lower = searchText.toLowerCase();
@@ -79,9 +86,7 @@ const VehicleScreen = () => {
 
   const renderItem = ({ item }) => (
     <Card style={styles.card} mode="outlined">
-      <Card.Cover
-        source={VehicleImage}
-      />
+      <Card.Cover source={VehicleImage} />
       <Card.Title
         title={item.model}
         subtitle={`Marca: ${item.brand.name} • Ano: ${item.year}`}

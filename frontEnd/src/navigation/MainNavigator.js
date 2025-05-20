@@ -1,3 +1,4 @@
+import 'react-native-url-polyfill/auto';
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/Dashboard/DashboardScreen";
@@ -8,7 +9,7 @@ import CategoryScreen from "../screens/Category/CategoryScreen";
 import SettingScreen from "../screens/Settings/SettingScreen";
 import BrandForm from "../screens/Brands/BrandForm";
 import CategoryForm from "../screens/Category/CategoryForm";
-import Icon from "@react-native-vector-icons/material-design-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 const VehicleStack = createStackNavigator();
@@ -75,7 +76,7 @@ export default function MainNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Icon name="home" size={size} color={color} />
+            <MaterialIcons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -85,7 +86,7 @@ export default function MainNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Icon name="car" size={size} color={color} />
+            <MaterialIcons name="directions-car" size={size} color={color} />
           ),
         }}
       />
@@ -95,7 +96,7 @@ export default function MainNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Icon name="abugida-thai" size={size} color={color} />
+            <MaterialIcons name="branding-watermark" size={size} color={color} />
           ),
         }}
       />
@@ -105,7 +106,7 @@ export default function MainNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Icon name="abacus" size={size} color={color} />
+            <MaterialIcons name="category" size={size} color={color} />
           ),
         }}
       />
@@ -115,7 +116,7 @@ export default function MainNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => (
-            <Icon name="cog" size={size} color={color} />
+            <MaterialIcons name="settings" size={size} color={color} />
           ),
         }}
       />

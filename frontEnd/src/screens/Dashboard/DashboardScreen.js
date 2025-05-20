@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
 import { Card, List, Text, ActivityIndicator } from "react-native-paper";
-import { getTotal } from "../../services/homeService";
+import { getTotal, getVehicleRecent } from "../../services/homeService";
 
 const DashboardScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);

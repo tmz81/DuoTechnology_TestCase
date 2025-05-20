@@ -1,4 +1,5 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
 import {
   Button,
@@ -36,9 +37,11 @@ const CategoryScreen = () => {
     }
   };
 
-  useEffect(() => {
-    loadCategorys();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadCategorys();
+    }, [])
+  );
 
   const handleDelete = async (id) => {
     Alert.alert(

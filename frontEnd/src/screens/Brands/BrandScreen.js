@@ -1,6 +1,14 @@
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
-import { Button, Text, Card, FAB, ActivityIndicator, IconButton } from "react-native-paper";
+import {
+  Button,
+  Text,
+  Card,
+  FAB,
+  ActivityIndicator,
+  IconButton,
+} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
 import { getAllBrands, deleteBrand } from "../../services/brandsService";
@@ -26,9 +34,11 @@ const BrandScreen = () => {
     }
   };
 
-  useEffect(() => {
-    loadBrands();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadBrands();
+    }, [])
+  );
 
   const handleDelete = (id) => {
     Alert.alert(
