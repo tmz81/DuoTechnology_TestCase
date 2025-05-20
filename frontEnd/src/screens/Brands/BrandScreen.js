@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
 import {
-  Button,
   Text,
   Card,
   FAB,
@@ -12,15 +11,18 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
 import { getAllBrands, deleteBrand } from "../../services/brandsService";
+import { useConfirmDelete } from "../../hooks/useConfirmDelete";
 
 const BrandScreen = () => {
+  const { user } = useContext(UserContext);
+  const navigation = useNavigation();
+  const isAdmin = user?.isAdmin || false;
+
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { user } = useContext(UserContext);
-  const navigation = useNavigation();
 
-  const isAdmin = user?.isAdmin || false;
+  const { confirmDelete, ModalAndSnackbar } = useConfirmDelete("Marca");
 
   const loadBrands = async () => {
     try {
@@ -39,27 +41,6 @@ const BrandScreen = () => {
       loadBrands();
     }, [])
   );
-
-  const handleDelete = (id) => {
-    Alert.alert(
-      "Confirmar exclusão",
-      "Tem certeza que deseja excluir esta marca?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          onPress: async () => {
-            try {
-              await deleteBrand(id);
-              loadBrands();
-            } catch (error) {
-              Alert.alert("Erro", "Falha ao excluir marca");
-            }
-          },
-        },
-      ]
-    );
-  };
 
   const renderItem = ({ item }) => (
     <Card style={styles.card} mode="contained">
@@ -80,7 +61,7 @@ const BrandScreen = () => {
               iconColor="#fff"
               size={20}
               style={[styles.iconButton, styles.deleteButton]}
-              onPress={() => handleDelete(item.id)}
+              onPress={() => confirmDelete(item.id, deleteBrand, loadBrands)}
             />
           </View>
         )}
@@ -104,6 +85,8 @@ const BrandScreen = () => {
           loadBrands();
         }}
       />
+
+      <ModalAndSnackbar />
 
       {isAdmin && (
         <FAB

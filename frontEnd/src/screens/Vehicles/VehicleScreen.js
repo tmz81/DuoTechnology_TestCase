@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
 import {
   Button,
@@ -8,32 +8,32 @@ import {
   TextInput,
   FAB,
   ActivityIndicator,
-  Divider,
 } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../../context/UserContext";
 import { getAllVehicles, deleteVehicle } from "../../services/vehiclesService";
-import VehicleImage from "../../../assets/vehicleDefault.png";
 import { getTotal } from "../../services/homeService";
+import { useConfirmDelete } from "../../hooks/useConfirmDelete";
+import VehicleImage from "../../../assets/Onix.jpeg";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const VehicleScreen = () => {
-  const [vehicles, setVehicles] = useState([]);
-  const [vehiclesRecents, setVehiclesRecents] = useState([]);
-  const [filteredVehicles, setFilteredVehicles] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(UserContext);
   const navigation = useNavigation();
-
   const isAdmin = user?.isAdmin || false;
+
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [filteredVehicles, setFilteredVehicles] = useState([]);
+  const [searchText, setSearchText] = useState("");
+
+  const { confirmDelete, ModalAndSnackbar } = useConfirmDelete("Veículo");
 
   const loadVehicles = async () => {
     try {
       const data = await getAllVehicles();
-      const dataTwo = await getTotal();
+      await getTotal();
       setVehicles(data);
-      setVehiclesRecents(dataTwo);
       setFilteredVehicles(data);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível carregar os veículos.");
@@ -62,62 +62,71 @@ const VehicleScreen = () => {
     setFilteredVehicles(filtered);
   }, [searchText, vehicles]);
 
-  const handleDelete = async (id) => {
-    Alert.alert(
-      "Confirmar exclusão",
-      "Tem certeza que deseja excluir este veículo?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteVehicle(id);
-              loadVehicles();
-            } catch (error) {
-              Alert.alert("Erro", "Falha ao excluir veículo.");
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const renderItem = ({ item }) => (
-    <Card style={styles.card} mode="outlined">
-      <Card.Cover source={VehicleImage} />
-      <Card.Title
-        title={item.model}
-        subtitle={`Marca: ${item.brand.name} • Ano: ${item.year}`}
-      />
-      <Card.Content>
-        <Text variant="bodyMedium">Categoria: {item.category.description}</Text>
-        <Text variant="bodyMedium">
-          Preço: R$ {Number(item.daily_price).toFixed(2)}
-        </Text>
-      </Card.Content>
+    <Card style={styles.carCard}>
+      <Card.Cover source={VehicleImage} style={styles.carImage} />
+      <Card.Content style={styles.carContent}>
+        <View style={styles.cardHeader}>
+          <View style={styles.ratingContainer}>
+            <MaterialCommunityIcons name="star" size={16} color="#FFD700" />
+            <Text style={styles.ratingText}>4.9/5.0</Text>
+          </View>
+          <Text style={styles.availableText}>Disponível agora</Text>
+        </View>
 
-      {isAdmin && (
-        <Card.Actions style={styles.actions}>
-          <Button
-            mode="contained"
-            onPress={() =>
-              navigation.navigate("VehicleForm", { vehicle: item })
-            }
-            style={styles.editButton}
-          >
-            Editar
-          </Button>
-          <Button
-            mode="contained"
-            onPress={() => handleDelete(item.id)}
-            style={styles.deleteButton}
-          >
-            Excluir
-          </Button>
-        </Card.Actions>
-      )}
+        <View style={styles.carInfo}>
+          <Text style={styles.carBrand}>{item.brand.name}</Text>
+          <Text style={styles.carModel}>
+            {item.model} {item.year}
+          </Text>
+        </View>
+
+        <Text style={styles.priceText}>
+          R${parseFloat(item.daily_price).toFixed(2)}/dia
+        </Text>
+
+        <View style={styles.specsContainer}>
+          <View style={styles.specItem}>
+            <MaterialCommunityIcons name="fuel" size={16} color="#6c63ff" />
+            <Text style={styles.specText}>Petrol</Text>
+          </View>
+          <View style={styles.specItem}>
+            <MaterialCommunityIcons
+              name="car-shift-pattern"
+              size={16}
+              color="#6c63ff"
+            />
+            <Text style={styles.specText}>Manual</Text>
+          </View>
+          <View style={styles.specItem}>
+            <MaterialCommunityIcons name="car-door" size={16} color="#6c63ff" />
+            <Text style={styles.specText}>Hatchback</Text>
+          </View>
+        </View>
+
+        {isAdmin && (
+          <View style={styles.adminActions}>
+            <Button
+              mode="contained"
+              onPress={() =>
+                navigation.navigate("VehicleForm", { vehicle: item })
+              }
+              style={styles.editButton}
+            >
+              Editar
+            </Button>
+            <Button
+              mode="contained"
+              onPress={() =>
+                confirmDelete(item.id, deleteVehicle, loadVehicles)
+              }
+              style={styles.deleteButton}
+            >
+              Excluir
+            </Button>
+          </View>
+        )}
+      </Card.Content>
     </Card>
   );
 
@@ -154,11 +163,11 @@ const VehicleScreen = () => {
             setRefreshing(true);
             loadVehicles();
           }}
-          ItemSeparatorComponent={() => (
-            <Divider style={{ marginVertical: 5 }} />
-          )}
+          contentContainerStyle={styles.listContent}
         />
       )}
+
+      <ModalAndSnackbar />
 
       {isAdmin && (
         <FAB
@@ -175,26 +184,96 @@ const VehicleScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 16,
+    backgroundColor: "#fff",
   },
   loader: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  card: {
+  listContent: {
+    paddingBottom: 20,
+  },
+  carCard: {
+    marginBottom: 20,
+    borderRadius: 12,
+    overflow: "hidden",
+    elevation: 2,
+  },
+  carImage: {
+    height: 220,
+    resizeMode: "contain",
     marginBottom: 10,
   },
-  actions: {
+  carContent: {
+    padding: 16,
+  },
+  cardHeader: {
+    flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  ratingText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: "#333",
+  },
+  availableText: {
+    color: "#00CC00",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  carInfo: {
+    marginBottom: 12,
+  },
+  carBrand: {
+    fontSize: 16,
+    color: "#666",
+  },
+  carModel: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  priceText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 16,
+  },
+  specsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  specItem: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  specText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: "#666",
+  },
+  adminActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 16,
   },
   editButton: {
-    backgroundColor: "#2a9d8f",
+    flex: 1,
+    marginRight: 8,
+    backgroundColor: "#6c63ff",
   },
   deleteButton: {
-    backgroundColor: "#e63946",
+    flex: 1,
+    marginLeft: 8,
+    backgroundColor: "#ff3b30",
   },
   fab: {
     position: "absolute",
@@ -202,7 +281,8 @@ const styles = StyleSheet.create({
     bottom: 16,
   },
   input: {
-    marginBottom: 10,
+    marginBottom: 16,
+    backgroundColor: "#fff",
   },
   emptyText: {
     marginTop: 30,

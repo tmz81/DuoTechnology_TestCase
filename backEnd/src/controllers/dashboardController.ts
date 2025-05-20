@@ -29,7 +29,7 @@ export const getRecentVehicles = async (
       orderBy: {
         createdAt: "desc",
       },
-      take: 10,
+      take: 1,
       select: {
         id: true,
         model: true,

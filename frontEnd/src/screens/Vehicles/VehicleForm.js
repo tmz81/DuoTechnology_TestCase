@@ -105,11 +105,12 @@ const VehicleForm = ({ route, navigation }) => {
       </Text>
 
       <TextInput
-        label="Modelo"
+        label="Modelo do Veículo"
         value={form.model}
         onChangeText={(text) => setForm({ ...form, model: text })}
         style={styles.input}
         mode="outlined"
+        left={<TextInput.Icon icon="text-box" />}
       />
 
       <View style={styles.pickerContainer}>
@@ -143,7 +144,7 @@ const VehicleForm = ({ route, navigation }) => {
       </View>
 
       <TextInput
-        label="Ano"
+        label="Ano do Veículo"
         value={form.year}
         onChangeText={(text) => {
           const somenteNumeros = text.replace(/\D/g, "");
@@ -154,6 +155,7 @@ const VehicleForm = ({ route, navigation }) => {
         keyboardType="numeric"
         style={styles.input}
         mode="outlined"
+        left={<TextInput.Icon icon="calendar" />}
       />
 
       <TextInput
@@ -166,6 +168,7 @@ const VehicleForm = ({ route, navigation }) => {
         keyboardType="numeric"
         style={styles.input}
         mode="outlined"
+        left={<TextInput.Icon icon="currency-brl" />}
       />
 
       <Button

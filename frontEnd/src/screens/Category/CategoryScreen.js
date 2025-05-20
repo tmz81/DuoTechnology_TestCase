@@ -15,15 +15,18 @@ import {
   getAllCategorys,
   deleteCategory,
 } from "../../services/categorysService";
+import { useConfirmDelete } from "../../hooks/useConfirmDelete";
 
 const CategoryScreen = () => {
+  const { user } = useContext(UserContext);
+  const navigation = useNavigation();
+  const isAdmin = user?.isAdmin || false;
+
   const [categorys, setCategorys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { user } = useContext(UserContext);
-  const navigation = useNavigation();
 
-  const isAdmin = user?.isAdmin || false;
+  const { confirmDelete, ModalAndSnackbar } = useConfirmDelete("Categoria");
 
   const loadCategorys = async () => {
     try {
@@ -42,27 +45,6 @@ const CategoryScreen = () => {
       loadCategorys();
     }, [])
   );
-
-  const handleDelete = async (id) => {
-    Alert.alert(
-      "Confirmar exclusão",
-      "Tem certeza que deseja excluir esta categoria?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          onPress: async () => {
-            try {
-              await deleteCategory(id);
-              loadCategorys();
-            } catch (error) {
-              Alert.alert("Erro", "Falha ao excluir categoria");
-            }
-          },
-        },
-      ]
-    );
-  };
 
   const renderItem = ({ item }) => (
     <Card style={styles.card} mode="contained">
@@ -85,7 +67,9 @@ const CategoryScreen = () => {
               iconColor="#fff"
               size={20}
               style={[styles.iconButton, styles.deleteButton]}
-              onPress={() => handleDelete(item.id)}
+              onPress={() =>
+                confirmDelete(item.id, deleteCategory, loadCategorys)
+              }
             />
           </View>
         )}
@@ -109,6 +93,8 @@ const CategoryScreen = () => {
           loadCategorys();
         }}
       />
+
+      <ModalAndSnackbar />
 
       {isAdmin && (
         <FAB

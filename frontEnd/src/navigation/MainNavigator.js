@@ -22,7 +22,7 @@ function VehicleStackScreen() {
       <VehicleStack.Screen
         name="VehicleList"
         component={VehicleScreen}
-        options={{ title: "" }}
+        options={{ title: "Veículos Recomendados" }}
       />
       <VehicleStack.Screen
         name="VehicleForm"
@@ -39,7 +39,7 @@ function BrandStackScreen() {
       <BrandStack.Screen
         name="BrandList"
         component={BrandScreen}
-        options={{ title: "" }}
+        options={{ title: "Marcas de Veículos" }}
       />
       <BrandStack.Screen
         name="BrandForm"
@@ -56,7 +56,7 @@ function CategoryStackScreen() {
       <CategoryStack.Screen
         name="CategortList"
         component={CategoryScreen}
-        options={{ title: "" }}
+        options={{ title: "Categorias de Veículos" }}
       />
       <CategoryStack.Screen
         name="CategoryForm"

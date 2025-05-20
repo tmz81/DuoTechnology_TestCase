@@ -213,7 +213,7 @@ export const deleteVehicle = async (
     await prisma.vehicles.delete({
       where: { id: parseInt(id) },
     });
-    res.status(204).send({ message: "Veículo excluido com sucesso" });
+    res.status(204).send({ message: "Veículo excluído com sucesso." });
   } catch (error) {
     res.status(400).json({ error: "Erro ao excluir veículo" });
   }

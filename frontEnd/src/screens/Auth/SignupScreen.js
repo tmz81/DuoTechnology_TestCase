@@ -8,6 +8,8 @@ const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -63,6 +65,7 @@ const SignupScreen = ({ navigation }) => {
         onChangeText={setName}
         style={styles.input}
         autoCapitalize="words"
+        left={<TextInput.Icon icon="account" />}
       />
       <TextInput
         label="Email"
@@ -72,6 +75,7 @@ const SignupScreen = ({ navigation }) => {
         style={styles.input}
         keyboardType="email-address"
         autoCapitalize="none"
+        left={<TextInput.Icon icon="email" />}
       />
       <TextInput
         label="Senha"
@@ -79,7 +83,14 @@ const SignupScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
         style={styles.input}
-        secureTextEntry
+        secureTextEntry={!showPassword}
+        left={<TextInput.Icon icon="lock" />}
+        right={
+          <TextInput.Icon
+            icon={showPassword ? "eye-off" : "eye"}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        }
       />
       <TextInput
         label="Confirmar Senha"
@@ -87,7 +98,14 @@ const SignupScreen = ({ navigation }) => {
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         style={styles.input}
-        secureTextEntry
+        secureTextEntry={!showConfirmPassword}
+        left={<TextInput.Icon icon="lock" />}
+        right={
+          <TextInput.Icon
+            icon={showConfirmPassword ? "eye-off" : "eye"}
+            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+          />
+        }
       />
       <View style={styles.switchContainer}>
         <Text>Administrador:</Text>

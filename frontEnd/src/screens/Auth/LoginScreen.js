@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { login: loginContext } = useContext(UserContext);
@@ -27,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = async () => {
     if (!validateForm()) return;
-    Keyboard.dismiss()
+    Keyboard.dismiss();
     setLoading(true);
     try {
       const userData = await login({ email, password });
@@ -54,6 +55,7 @@ const LoginScreen = ({ navigation }) => {
         style={styles.input}
         keyboardType="email-address"
         autoCapitalize="none"
+        left={<TextInput.Icon icon="email" />}
       />
       <TextInput
         label="Senha"
@@ -61,7 +63,14 @@ const LoginScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
         style={styles.input}
-        secureTextEntry
+        secureTextEntry={!showPassword}
+        left={<TextInput.Icon icon="lock" />}
+        right={
+          <TextInput.Icon
+            icon={showPassword ? "eye-off" : "eye"}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        }
       />
       <Button
         mode="contained"
