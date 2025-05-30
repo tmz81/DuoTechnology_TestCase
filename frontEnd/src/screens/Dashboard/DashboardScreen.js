@@ -212,6 +212,7 @@ const DashboardScreen = ({ navigation }) => {
   container: {
     padding: 16,
     backgroundColor: "#fff",
+    paddingTop: 25,
   },
   loadingContainer: {
     flex: 1,

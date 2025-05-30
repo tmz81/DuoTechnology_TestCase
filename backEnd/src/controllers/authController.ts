@@ -11,7 +11,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const user = await prisma.users.findUnique({ where: { email } });
 
     if (!user) {
-      res.status(401).json({ error: "Credenciais inválidas" });
+      res.status(401).json({ error: "Usuário não encontrado." });
       return;
     }
 
